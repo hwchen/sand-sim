@@ -1,6 +1,7 @@
 package sand_sim
 
 import "core:log"
+import "core:slice"
 import rl "vendor:raylib"
 
 Colors : []rl.Color = {rl.RED, rl.GREEN, rl.ORANGE, rl.BLUE}
@@ -13,7 +14,7 @@ main :: proc() {
     // test sand
     // this should draw sand on the bottom
     for i in 0..<width {
-        for j in 0..<10 {
+        for j in 10..<20 {
             grid[(j * width) + i] = rl.GREEN
         }
     }
@@ -25,6 +26,16 @@ main :: proc() {
     for !rl.WindowShouldClose() {
         rl.BeginDrawing()
         rl.ClearBackground(rl.WHITE)
+
+        // update
+        // goes from bottom up (which is the order of the grid)
+        for y in 0..< height - 1 {
+            for x in 0..< width - 1 {
+                curr_idx := (y * width) + x
+                above_idx := ((y + 1) * width) + x
+                slice.swap(grid, curr_idx, above_idx)
+            }
+        }
 
         // draw
         for y in 0..< height {
