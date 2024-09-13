@@ -7,8 +7,10 @@ import rl "vendor:raylib"
 Colors : []rl.Color = {rl.RED, rl.GREEN, rl.ORANGE, rl.BLUE}
 
 main :: proc() {
-    height := 720
-    width := 1280
+    win_height := 360
+    win_width := 640
+    height := 360
+    width := 640
     grid := make([]rl.Color, height * width)
 
     // test sand
@@ -20,13 +22,9 @@ main :: proc() {
     }
 
     context.logger = log.create_console_logger(.Info)
-    rl.SetTargetFPS(60)
-    rl.InitWindow(i32(width), i32(height), "Sand is coarse and rough")
+    rl.InitWindow(i32(win_width), i32(win_height), "Sand is coarse and rough")
 
     for !rl.WindowShouldClose() {
-        rl.BeginDrawing()
-        rl.ClearBackground(rl.WHITE)
-
         // update
         // goes from bottom up (which is the order of the grid)
         for y in 0..< height - 1 {
@@ -37,13 +35,20 @@ main :: proc() {
             }
         }
 
-        // draw
-        for y in 0..< height {
-            for x in 0..< width {
-                rl.DrawPixel(i32(x), i32(height - y), grid[(y * width) + x])
-            }
+        img := rl.Image {
+            data = raw_data(grid),
+            width = i32(width),
+            height = i32(height),
+            mipmaps = 1,
+            format = rl.PixelFormat.UNCOMPRESSED_R8G8B8A8
         }
+        texture := rl.LoadTextureFromImage(img)
 
+        // draw
+        rl.BeginDrawing()
+        rl.ClearBackground(rl.WHITE)
+        // neg height flips the image
+        rl.DrawTextureRec(texture, {0,0, f32(win_width), f32(-win_height)}, {0, 0}, rl.WHITE)
         rl.EndDrawing()
     }
     rl.CloseWindow()
