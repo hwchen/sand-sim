@@ -7,8 +7,8 @@ import rl "vendor:raylib"
 Colors : []rl.Color = {rl.RED, rl.GREEN, rl.ORANGE, rl.BLUE}
 
 main :: proc() {
-    win_height := 360
-    win_width := 640
+    win_height := 720
+    win_width := 1280
     height := 360
     width := 640
     grid := make([]rl.Color, height * width)
@@ -48,7 +48,7 @@ main :: proc() {
         rl.BeginDrawing()
         rl.ClearBackground(rl.WHITE)
         // neg height flips the image
-        rl.DrawTextureRec(texture, {0,0, f32(win_width), f32(-win_height)}, {0, 0}, rl.WHITE)
+        rl.DrawTexturePro(texture, {0,0,f32(width), f32(-height)}, {0,0, f32(win_width), f32(win_height)}, {0, 0}, 0, rl.WHITE)
         rl.EndDrawing()
     }
     rl.CloseWindow()
