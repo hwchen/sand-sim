@@ -1,5 +1,11 @@
 package sand_sim
 
+// TODO:
+// - [x] fix update loop speed v. rendering loop speed (first pass)
+// - [ ] fix memory leak
+// - [ ] randomize hue/saturation
+// - [ ] drop sand from mouse pointer
+
 import "core:log"
 import "core:slice"
 import rl "vendor:raylib"
@@ -22,16 +28,22 @@ main :: proc() {
     }
 
     context.logger = log.create_console_logger(.Info)
+    //rl.SetTargetFPS(120)
     rl.InitWindow(i32(win_width), i32(win_height), "Sand is coarse and rough")
 
     for !rl.WindowShouldClose() {
         // update
-        // goes from bottom up (which is the order of the grid)
-        for y in 0..< height - 1 {
-            for x in 0..< width - 1 {
-                curr_idx := (y * width) + x
-                above_idx := ((y + 1) * width) + x
-                slice.swap(grid, curr_idx, above_idx)
+
+        updates_per_frame := int(800 * rl.GetFrameTime())
+
+        for _ in 0..<updates_per_frame {
+            // goes from bottom up (which is the order of the grid)
+            for y in 0..< height - 1 {
+                for x in 0..< width - 1 {
+                    curr_idx := (y * width) + x
+                    above_idx := ((y + 1) * width) + x
+                    slice.swap(grid, curr_idx, above_idx)
+                }
             }
         }
 
